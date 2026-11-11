@@ -1,16 +1,16 @@
 # n8n-nodes-rss
 
-RSS 2.0 feed nodes for n8n.
+Create and serve RSS 2.0 feeds from n8n workflow data.
 
 > [!NOTE]
-> These nodes have only been tested with n8n 2.47.3.
+> Tested with n8n 2.47.3.
 
 ## Features
 
-Serve JSON data as RSS 2.0 feeds through n8n workflows.
+Build feeds with configurable URLs, channel metadata, article fields, categories, and enclosures.
 
-- **RSS URL**: Start a workflow when a feed URL is requested and configure its channel metadata.
-- **RSS Respond**: Convert incoming items into RSS XML and respond to the feed request.
+- **RSS URL**: Expose a GET endpoint that starts the workflow and defines the feed's channel metadata.
+- **RSS Respond**: Map incoming items to RSS articles, select which items to include, and return the feed as XML.
 
 ## References
 
