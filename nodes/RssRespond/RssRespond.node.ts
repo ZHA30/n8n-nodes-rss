@@ -18,7 +18,7 @@ export class RssRespond implements INodeType {
 		icon: 'node:rss-read',
 		iconColor: 'orange-red',
 		group: ['transform'],
-		version: [1, 1.1],
+		version: 1.1,
 		description: 'Build RSS items and respond to an RSS URL request',
 		subtitle: 'Return RSS feed',
 		defaults: { name: 'RSS Respond' },
@@ -43,11 +43,7 @@ export class RssRespond implements INodeType {
 		const xmlItems: string[] = [];
 		for (let itemIndex = 0; itemIndex < records.length; itemIndex++) {
 			try {
-				if (
-					this.getNode().typeVersion > 1 &&
-					!this.getNodeParameter('includeItem', itemIndex)
-				)
-					continue;
+				if (!this.getNodeParameter('includeItem', itemIndex)) continue;
 				const item = {
 					title: this.getNodeParameter('title', itemIndex),
 					link: this.getNodeParameter('link', itemIndex),
@@ -55,7 +51,6 @@ export class RssRespond implements INodeType {
 					pubDate: this.getNodeParameter('pubDate', itemIndex),
 					additionalFields: getAdditionalFields(
 						this.getNodeParameter('additionalFields', itemIndex) as IDataObject,
-						this.getNode().typeVersion,
 					),
 				};
 				xmlItems.push(itemXml(item));

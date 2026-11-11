@@ -22,7 +22,7 @@ export class RssUrl implements INodeType {
 		icon: 'node:rss-read',
 		iconColor: 'orange-red',
 		group: ['trigger'],
-		version: [1, 1.1],
+		version: 1.1,
 		description: 'Start a workflow when an RSS feed is requested',
 		subtitle: '={{ "/" + $parameter.path }}',
 		defaults: { name: 'RSS URL' },
@@ -84,14 +84,13 @@ export class RssUrl implements INodeType {
 			);
 		}
 		const channel = Object.fromEntries(
-			getChannelProperties(this.getNode().typeVersion).map(({ name }) => [
+			getChannelProperties().map(({ name }) => [
 				name,
 				this.getNodeParameter(name),
 			]),
 		) as IDataObject;
 		channel.additionalFields = getAdditionalFields(
 			channel.additionalFields as IDataObject,
-			this.getNode().typeVersion,
 		);
 		try {
 			channelXml(channel);

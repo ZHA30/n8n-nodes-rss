@@ -36,38 +36,18 @@ const weekdays = [
 	'Sunday',
 ];
 const group = (
-	version: number,
 	displayName: string,
 	name: string,
 	values: INodeProperties[],
-): INodeProperties =>
-	version === 1
-		? {
-				displayName,
-				name,
-				type: 'collection',
-				placeholder: 'Add Field',
-				description: `Required: ${values
-					.filter((field) => field.required)
-					.map((field) => field.displayName)
-					.join(', ')}`,
-				// eslint-disable-next-line n8n-nodes-base/node-param-default-wrong-for-collection -- Populate the object from its field defaults.
-				default: Object.fromEntries(
-					values.map(({ name, default: value }) => [name, value]),
-				),
-				options: values.map((field) => ({
-					...field,
-					required: false,
-				})),
-			}
-		: {
-				displayName,
-				name,
-				type: 'fixedCollection',
-				default: {},
-				placeholder: `Add ${displayName}`,
-				options: [{ displayName, name: 'fields', values }],
-			};
+): INodeProperties => ({
+	displayName,
+	name,
+	type: 'fixedCollection',
+	typeOptions: { multipleValues: false },
+	default: { fields: {} },
+	placeholder: `Add ${displayName}`,
+	options: [{ displayName, name: 'fields', values }],
+});
 const categories: INodeProperties = {
 	displayName: 'Categories',
 	name: 'categories',
@@ -90,7 +70,7 @@ const categories: INodeProperties = {
 	],
 };
 
-export const getChannelProperties = (version: number): INodeProperties[] => [
+export const getChannelProperties = (): INodeProperties[] => [
 	{ ...text('Title', 'title'), required: true },
 	{
 		...url('Link', 'link'),
@@ -109,7 +89,7 @@ export const getChannelProperties = (version: number): INodeProperties[] => [
 		default: {},
 		options: [
 			categories,
-			group(version, 'Cloud', 'cloud', [
+			group('Cloud', 'cloud', [
 				{ ...requiredText('Domain', 'domain'), placeholder: 'rpc.example.com' },
 				{
 					displayName: 'Port',
@@ -139,7 +119,7 @@ export const getChannelProperties = (version: number): INodeProperties[] => [
 				description: 'URL of the RSS format specification',
 			},
 			text('Generator', 'generator'),
-			group(version, 'Image', 'image', [
+			group('Image', 'image', [
 				{ ...url('URL', 'url'), required: true },
 				requiredText('Title', 'title'),
 				{ ...url('Link', 'link'), required: true },
@@ -188,7 +168,7 @@ export const getChannelProperties = (version: number): INodeProperties[] => [
 				description:
 					'Hours when aggregators may skip refreshing the feed (GMT, 0–23)',
 			},
-			group(version, 'Text Input', 'textInput', [
+			group('Text Input', 'textInput', [
 				requiredText('Title', 'title'),
 				requiredText('Description', 'description'),
 				{
@@ -211,10 +191,10 @@ export const getChannelProperties = (version: number): INodeProperties[] => [
 	},
 ];
 
-const getItemProperties = (version: number): INodeProperties[] => [
+const getItemProperties = (): INodeProperties[] => [
 	{
 		...text('Title', 'title'),
-		default: version === 1 ? '={{ $json.title }}' : '',
+		default: '',
 		placeholder: 'Article title',
 		description: 'Item title. Provide a title or description.',
 	},
@@ -239,7 +219,7 @@ const getItemProperties = (version: number): INodeProperties[] => [
 				...url('Comments', 'comments'),
 				description: 'URL of the page for comments on this item',
 			},
-			group(version, 'Enclosure', 'enclosure', [
+			group('Enclosure', 'enclosure', [
 				{ ...url('URL', 'url'), required: true },
 				{
 					displayName: 'Length (Bytes)',
@@ -256,7 +236,7 @@ const getItemProperties = (version: number): INodeProperties[] => [
 					description: 'MIME type of the attachment',
 				},
 			]),
-			group(version, 'GUID', 'guid', [
+			group('GUID', 'guid', [
 				{
 					...requiredText('Value', 'value'),
 					description:
@@ -270,7 +250,7 @@ const getItemProperties = (version: number): INodeProperties[] => [
 					description: 'Whether the GUID is a permanent URL',
 				},
 			]),
-			group(version, 'Source', 'source', [
+			group('Source', 'source', [
 				requiredText('Title', 'title'),
 				{ ...url('URL', 'url'), required: true },
 			]),
@@ -278,14 +258,7 @@ const getItemProperties = (version: number): INodeProperties[] => [
 	},
 ];
 
-const versions = [1, 1.1];
-
-export const channelProperties = versions.flatMap((version) =>
-	getChannelProperties(version).map((property) => ({
-		...property,
-		displayOptions: { show: { '@version': [version] } },
-	})),
-);
+export const channelProperties = getChannelProperties();
 
 export const itemProperties: INodeProperties[] = [
 	{
@@ -294,21 +267,11 @@ export const itemProperties: INodeProperties[] = [
 		type: 'boolean',
 		default: true,
 		description: 'Whether to include this input item in the feed',
-		displayOptions: { show: { '@version': [1.1] } },
 	},
-	...versions.flatMap((version) =>
-		getItemProperties(version).map((property) => ({
-			...property,
-			displayOptions: { show: { '@version': [version] } },
-		})),
-	),
+	...getItemProperties(),
 ];
 
-export function getAdditionalFields(
-	data: IDataObject,
-	version: number,
-): IDataObject {
-	if (version === 1) return data;
+export function getAdditionalFields(data: IDataObject): IDataObject {
 	const result = { ...data };
 	for (const name of [
 		'cloud',
