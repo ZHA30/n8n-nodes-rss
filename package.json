@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-rss",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Create RSS feeds with paired URL and response nodes for n8n",
 	"license": "MIT",
 	"keywords": [
