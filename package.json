@@ -41,5 +41,15 @@
 		"name": "ZHA30",
 		"email": "zha303050@gmail.com"
 	},
-	"homepage": "https://www.npmjs.com/package/n8n-nodes-rss"
+	"homepage": "https://github.com/ZHA30/n8n-nodes-rss#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ZHA30/n8n-nodes-rss.git"
+	},
+	"bugs": {
+		"url": "https://github.com/ZHA30/n8n-nodes-rss/issues"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
 }
