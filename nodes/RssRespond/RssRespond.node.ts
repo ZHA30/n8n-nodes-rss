@@ -6,7 +6,7 @@ import type {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
-import { itemProperties } from '../shared/fields';
+import { getAdditionalFields, itemProperties } from '../shared/fields';
 import { feedXml, itemXml } from '../shared/rss';
 
 // eslint-disable-next-line @n8n/community-nodes/node-usable-as-tool -- This node completes an HTTP response, not an agent tool call.
@@ -18,7 +18,7 @@ export class RssRespond implements INodeType {
 		icon: 'node:rss-read',
 		iconColor: 'orange-red',
 		group: ['transform'],
-		version: 1,
+		version: [1, 1.1],
 		description: 'Build RSS items and respond to an RSS URL request',
 		subtitle: 'Return RSS feed',
 		defaults: { name: 'RSS Respond' },
@@ -43,15 +43,20 @@ export class RssRespond implements INodeType {
 		const xmlItems: string[] = [];
 		for (let itemIndex = 0; itemIndex < records.length; itemIndex++) {
 			try {
+				if (
+					this.getNode().typeVersion > 1 &&
+					!this.getNodeParameter('includeItem', itemIndex)
+				)
+					continue;
 				const item = {
 					title: this.getNodeParameter('title', itemIndex),
 					link: this.getNodeParameter('link', itemIndex),
 					description: this.getNodeParameter('description', itemIndex),
 					pubDate: this.getNodeParameter('pubDate', itemIndex),
-					additionalFields: this.getNodeParameter(
-						'additionalFields',
-						itemIndex,
-					) as IDataObject,
+					additionalFields: getAdditionalFields(
+						this.getNodeParameter('additionalFields', itemIndex) as IDataObject,
+						this.getNode().typeVersion,
+					),
 				};
 				xmlItems.push(itemXml(item));
 			} catch (error) {

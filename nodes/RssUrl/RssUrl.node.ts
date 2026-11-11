@@ -1,15 +1,19 @@
 import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 import type {
 	IDataObject,
+	IHookFunctions,
 	INodeType,
 	INodeTypeDescription,
 	IWebhookFunctions,
 	IWebhookResponseData,
 } from 'n8n-workflow';
-import { channelProperties } from '../shared/fields';
+import {
+	channelProperties,
+	getAdditionalFields,
+	getChannelProperties,
+} from '../shared/fields';
 import { channelXml } from '../shared/rss';
 
-// eslint-disable-next-line @n8n/community-nodes/webhook-lifecycle-complete -- This is a local HTTP endpoint; no remote subscription is created.
 export class RssUrl implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'RSS URL',
@@ -18,7 +22,7 @@ export class RssUrl implements INodeType {
 		icon: 'node:rss-read',
 		iconColor: 'orange-red',
 		group: ['trigger'],
-		version: 1,
+		version: [1, 1.1],
 		description: 'Start a workflow when an RSS feed is requested',
 		subtitle: '={{ "/" + $parameter.path }}',
 		defaults: { name: 'RSS URL' },
@@ -42,20 +46,30 @@ export class RssUrl implements INodeType {
 				default: '',
 				required: true,
 				placeholder: 'news',
-				description: 'Webhook path. Must be unique for GET requests.',
+				description:
+					'Unique GET path, such as news, blog/news, or news.xml, without a leading slash',
 			},
 			...channelProperties,
 		],
 	};
 
+	webhookMethods = {
+		default: {
+			async checkExists(this: IHookFunctions): Promise<boolean> {
+				validatePath.call(this);
+				return true;
+			},
+			async create(): Promise<boolean> {
+				return true;
+			},
+			async delete(): Promise<boolean> {
+				return true;
+			},
+		},
+	};
+
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
-		const path = this.getNodeParameter('path') as string;
-		if (!/^[A-Za-z0-9_-]+(?:\/[A-Za-z0-9_-]+)*(?:\.xml)?$/.test(path)) {
-			throw new NodeOperationError(
-				this.getNode(),
-				'Use a path such as news, blog/news, or news.xml',
-			);
-		}
+		validatePath.call(this);
 		const responseType = this.getNode().type.replace(
 			/\.rssUrl$/,
 			'.rssRespond',
@@ -63,15 +77,22 @@ export class RssUrl implements INodeType {
 		const responses = this.getChildNodes(this.getNode().name).filter(
 			(node) => !node.disabled && node.type === responseType,
 		);
-		if (responses.length !== 1) {
+		if (responses.length === 0) {
 			throw new NodeOperationError(
 				this.getNode(),
-				'Connect exactly one RSS Respond node downstream',
+				'Connect an RSS Respond node downstream',
 			);
 		}
 		const channel = Object.fromEntries(
-			channelProperties.map(({ name }) => [name, this.getNodeParameter(name)]),
+			getChannelProperties(this.getNode().typeVersion).map(({ name }) => [
+				name,
+				this.getNodeParameter(name),
+			]),
 		) as IDataObject;
+		channel.additionalFields = getAdditionalFields(
+			channel.additionalFields as IDataObject,
+			this.getNode().typeVersion,
+		);
 		try {
 			channelXml(channel);
 		} catch (error) {
@@ -91,5 +112,15 @@ export class RssUrl implements INodeType {
 				],
 			],
 		};
+	}
+}
+
+function validatePath(this: IHookFunctions | IWebhookFunctions): void {
+	const path = this.getNodeParameter('path') as string;
+	if (!/^[A-Za-z0-9_-]+(?:\/[A-Za-z0-9_-]+)*(?:\.xml)?$/.test(path)) {
+		throw new NodeOperationError(
+			this.getNode(),
+			'Use a path such as news, blog/news, or news.xml',
+		);
 	}
 }
