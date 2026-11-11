@@ -26,6 +26,7 @@ jobs:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
           cache: npm
+      - run: npm install --global npm@11.15.0
       - run: npm ci
       - run: npm run lint
       - run: npm run build
@@ -34,6 +35,6 @@ jobs:
         run: |
           test "$GITHUB_REF_TYPE" = tag
           test "$GITHUB_REF_NAME" = "$(node -p 'require("./package.json").version')"
-      - run: npm publish --access public --provenance
+      - run: npm stage publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
