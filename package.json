@@ -1,0 +1,45 @@
+{
+	"name": "n8n-nodes-rss",
+	"version": "0.1.0",
+	"description": "Create RSS feeds with paired URL and response nodes for n8n",
+	"license": "MIT",
+	"keywords": [
+		"n8n-community-node-package",
+		"rss",
+		"feed"
+	],
+	"scripts": {
+		"build": "n8n-node build",
+		"dev": "n8n-node dev",
+		"lint": "n8n-node lint",
+		"lint:fix": "n8n-node lint --fix"
+	},
+	"files": [
+		"dist"
+	],
+	"engines": {
+		"node": ">=24"
+	},
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"strict": true,
+		"nodes": [
+			"dist/nodes/RssUrl/RssUrl.node.js",
+			"dist/nodes/RssRespond/RssRespond.node.js"
+		]
+	},
+	"devDependencies": {
+		"@n8n/node-cli": "0.56.1",
+		"@types/node": "^24.19.2",
+		"n8n-workflow": "^2.47.0",
+		"typescript": "^5.9.3"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	},
+	"author": {
+		"name": "ZHA30",
+		"email": "zha303050@gmail.com"
+	},
+	"homepage": "https://www.npmjs.com/package/n8n-nodes-rss"
+}
