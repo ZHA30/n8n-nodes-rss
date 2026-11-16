@@ -12,7 +12,8 @@
 		"build": "n8n-node build",
 		"dev": "n8n-node dev",
 		"lint": "n8n-node lint",
-		"lint:fix": "n8n-node lint --fix"
+		"lint:fix": "n8n-node lint --fix",
+		"check:package": "node scripts/check-package.mjs"
 	},
 	"files": [
 		"dist"
@@ -30,9 +31,9 @@
 	},
 	"devDependencies": {
 		"@n8n/node-cli": "0.56.1",
-		"@types/node": "^24.19.2",
-		"n8n-workflow": "^2.47.0",
-		"typescript": "^5.9.3"
+		"@types/node": "24.19.2",
+		"n8n-workflow": "2.47.0",
+		"typescript": "5.9.3"
 	},
 	"peerDependencies": {
 		"n8n-workflow": "*"
@@ -50,6 +51,7 @@
 		"url": "https://github.com/ZHA30/n8n-nodes-rss/issues"
 	},
 	"publishConfig": {
-		"access": "public"
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
 	}
 }

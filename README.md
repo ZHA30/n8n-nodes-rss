@@ -3,7 +3,7 @@
 Create and serve RSS 2.0 feeds from n8n workflow data.
 
 > [!NOTE]
-> Tested with n8n 2.47.3.
+> Install `n8n-nodes-rss` from Settings → Community Nodes in self-hosted n8n running Node.js 24 or later.
 
 ## Features
 

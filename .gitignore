@@ -2,3 +2,9 @@ node_modules/
 dist/
 *.tsbuildinfo
 .DS_Store
+*.tgz
+*.log
+.n8n/
+.env
+.env.*
+!.env.example
