@@ -266,7 +266,7 @@ export const itemProperties: INodeProperties[] = [
 		name: 'includeItem',
 		type: 'boolean',
 		default: true,
-		description: 'Whether to include this input item in the feed',
+		description: 'Whether to include this input item in the feed. Use an expression to decide for each item.',
 	},
 	...getItemProperties(),
 ];

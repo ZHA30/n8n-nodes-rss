@@ -23,7 +23,7 @@ export class RssUrl implements INodeType {
 		iconColor: 'orange-red',
 		group: ['trigger'],
 		version: 1.1,
-		description: 'Start a workflow when an RSS feed is requested',
+		description: 'Set the feed URL and channel metadata, then start the workflow on each request',
 		subtitle: '={{ "/" + $parameter.path }}',
 		defaults: { name: 'RSS URL' },
 		inputs: [],

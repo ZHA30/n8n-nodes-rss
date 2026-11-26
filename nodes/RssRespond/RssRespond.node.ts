@@ -19,7 +19,7 @@ export class RssRespond implements INodeType {
 		iconColor: 'orange-red',
 		group: ['transform'],
 		version: 1.1,
-		description: 'Build RSS items and respond to an RSS URL request',
+		description: 'Map input records to RSS articles and return the XML feed to the requester',
 		subtitle: 'Return RSS feed',
 		defaults: { name: 'RSS Respond' },
 		inputs: [NodeConnectionTypes.Main],
