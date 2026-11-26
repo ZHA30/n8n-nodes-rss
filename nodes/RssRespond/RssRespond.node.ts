@@ -41,6 +41,7 @@ export class RssRespond implements INodeType {
 		const entry = this.getWorkflowDataProxy(0).$items(entries[0].name, 0, 0)[0];
 		const records = this.getInputData();
 		const xmlItems: string[] = [];
+		const pairedItem: Array<{ item: number }> = [];
 		for (let itemIndex = 0; itemIndex < records.length; itemIndex++) {
 			try {
 				if (!this.getNodeParameter('includeItem', itemIndex)) continue;
@@ -54,6 +55,7 @@ export class RssRespond implements INodeType {
 					),
 				};
 				xmlItems.push(itemXml(item));
+				pairedItem.push({ item: itemIndex });
 			} catch (error) {
 				throw new NodeOperationError(this.getNode(), error as Error, {
 					itemIndex,
@@ -70,7 +72,7 @@ export class RssRespond implements INodeType {
 			},
 		});
 		return [
-			[{ json: { xml }, pairedItem: records.map((_, item) => ({ item })) }],
+			[{ json: { xml }, pairedItem }],
 		];
 	}
 }
